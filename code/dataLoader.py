@@ -5,11 +5,11 @@ import cv2
 import glob
 
 class DataLoad:
-    def __init__(self, dirImage, img_rows, img_cols, raw = True, dtype = np.uint8):
+    def __init__(self, dirImage, img_rows = 128, img_cols = 128, raw = True):
         self.dirImage = dirImage
         self.img_rows = img_rows
         self.img_cols = img_cols
-        self.dtype = dtype
+        self.dtype = np.uint8
         self.data = raw
 
     def loadPathData(self):
@@ -20,7 +20,7 @@ class DataLoad:
             filenames += glob.glob(self.dirImage + "/*" + ".tif")
         images = []
         for file in filenames:
-            img = cv2.imread(file,0)
+            img = cv2.imread(file, 0)
             img= cv2.resize(img, (self.img_rows, self.img_cols), interpolation = cv2.INTER_AREA)
             img = np.asarray(img, dtype = self.dtype)
             images.append(img)
@@ -37,4 +37,7 @@ class DataLoad:
         batchImg -= mean
         batchImg /= std
         batchImg /= 255.
+        return batchImg
+    def normalized(self, batchImg):
+        batchImg = batchImg>127 and 1 or 0
         return batchImg
