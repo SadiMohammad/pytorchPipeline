@@ -41,7 +41,7 @@ class doubleConv(nn.Module):
                                out_channels = outCh,
                                kernel_size = 3,
                                padding = 1)
-        self.batchnorm2 = nn.Batchnorm2d(num_features = outCh)
+        self.batchnorm2 = nn.BatchNorm2d(num_features = outCh)
 
     def forward(self, x):
         x = F.relu(self.batchnorm1(self.conv1(x)))
@@ -51,7 +51,7 @@ class doubleConv(nn.Module):
 class inputConv(nn.Module):
     def __init__(self, inCh, outCh):
         super(inputConv, self).__init__()
-        self.conv = double_conv(inCh, outCh)
+        self.conv = doubleConv(inCh, outCh)
 
     def forward(self, x):
         x = self.conv(x)
@@ -60,7 +60,7 @@ class inputConv(nn.Module):
 class down(nn.Module):
     def __init__(self, inCh, outCh):
         super(down, self).__init__()
-        self.pool = nn.MaxPooling2D(kernel_size = 2)
+        self.pool = nn.MaxPool2d(kernel_size = 2)
         self.conv = doubleConv(inCh, outCh)
 
     def forward(self, x):
@@ -70,8 +70,8 @@ class down(nn.Module):
 class up(nn.Module):
     def __init__(self, inCh, outCh, bilinear = True):
         super(up, self).__init__()
-        self.up = nn.ConvTranspose2d(in_ch, outCh, kernel_size = 2, stride = 2)
-        self.conv = double_conv(inCh, outCh)
+        self.up = nn.ConvTranspose2d(inCh, outCh, kernel_size = 2, stride = 2)
+        self.conv = doubleConv(inCh, outCh)
 
     def forward(self, x1, x2):  #x2 is the skip connection
         x1 = self.up(x1)
