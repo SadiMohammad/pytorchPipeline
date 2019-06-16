@@ -1,2 +1,4 @@
 data/*
-ref/*
+refs/*
+!data/placeholder.txt
+!refs/placeholder.txt
