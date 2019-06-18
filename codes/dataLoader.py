@@ -41,3 +41,7 @@ class DataLoad:
     def normalized(self, batchImg):
         batchImg = batchImg>127 and 1 or 0
         return batchImg
+
+if __name__ == "__main__":
+    imgRawTrain = DataLoad('../data/train/raw all', 128, 128).loadPathData()
+    imgMaskTrain = DataLoad('../data/train/mask all', 128, 128, False).loadPathData()
