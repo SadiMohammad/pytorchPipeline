@@ -32,16 +32,18 @@ class DataLoad:
 
     def stdMeaned(self, batchImg):
         batchImg = batchImg.astype('float32')
+        batchImg /= 255.
         mean = np.mean(batchImg)
         std = np.std(batchImg)
         batchImg -= mean
         batchImg /= std
-        batchImg /= 255.
         return batchImg
     def normalized(self, batchImg):
-        batchImg = batchImg>127 and 1 or 0
+        batchImg = (batchImg > 127).astype(np.uint)
         return batchImg
 
 if __name__ == "__main__":
     imgRawTrain = DataLoad('../data/train/raw all', 128, 128).loadPathData()
     imgMaskTrain = DataLoad('../data/train/mask all', 128, 128, False).loadPathData()
+    imgRawTrainMeaned = DataLoad('../data/train/raw all', 128, 128).stdMeaned(imgRawTrain)
+    imgMaskTrainNormed = DataLoad('../data/train/mask all', 128, 128, False).normalized(imgMaskTrain)

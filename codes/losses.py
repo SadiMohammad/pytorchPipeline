@@ -18,5 +18,12 @@ class Loss:
     def dice_coeff(self):
         return (2. * self.intersection + self.smooth) / (torch.sum(self.y_true_f, dim = 1) + torch.sum(self.y_pred_f, dim = 1) + self.smooth)
 
+    def dice_coeff_loss(self):
+        return 1-((2. * self.intersection + self.smooth) / (torch.sum(self.y_true_f, dim = 1) + torch.sum(self.y_pred_f, dim = 1) + self.smooth))
+
     def iou_calc(self):
         return (self.intersection + self.smooth)/(self.union + self.smooth)
+
+    def iou_calc(self):
+        return 1-((self.intersection + self.smooth) / (self.union + self.smooth))
+

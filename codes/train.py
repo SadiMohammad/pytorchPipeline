@@ -1,17 +1,17 @@
 
 from torch import optim
 import torch
-from torch.utils.data import random_split
 from tqdm import tqdm
 from configparser import ConfigParser
 import sys
 sys.path.append('..')
 from models import UNet
-from losses import Loss
-from dataLoader import DataLoad
+from losses import *
+from dataLoader import *
+from utils import *
+from losses import *
+from eval import *
 
-# Device configuration
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 class config:
     def __init__(self):
@@ -40,26 +40,27 @@ class train(config):
     def __init__(self):
         super().__init__()
 
-    def main(self, model):
-        imgRawTrain = DataLoad('../data/train/raw all', 128, 128).loadPathData()
-        imgMaskTrain = DataLoad('../data/train/mask all', 128, 128, False).loadPathData()
-        imgRawTrainMeaned = DataLoad('../data/train/raw all', 128, 128).stdMeaned(imgRawTrain)
-        imgMaskTrainNorm = DataLoad('../data/train/raw all', 128, 128, False).normalized(imgMaskTrain)
+    def main(self, model, device):
+        imgRawTrain = DataLoad(self.trainImagePath, self.imgRows, self.imgCols).loadPathData()
+        imgMaskTrain = DataLoad(self.trainMaskPath, self.imgRows, self.imgCols, False).loadPathData()
+        imgRawTrainMeaned = DataLoad(self.trainImagePath, self.imgRows, self.imgCols).stdMeaned(imgRawTrain)
+        imgMaskTrainNormed = DataLoad(self.trainMaskPath, self.imgRows, self.imgCols, False).normalized(imgMaskTrain)
 
-        tensorRawTrain = torch.from_numpy(imgRawTrainMeaned).float().to(device)
-        tensorMaskTrain = torch.from_numpy(imgMaskTrainNorm).float().to(device)
+        imgTrain, imgVal, maskTrain, maskVal = split_train_val(imgRawTrainMeaned, imgMaskTrainNormed, 0.1)
+        modelName = model.__class__.__name__
 
         print('''
             Starting training:
+                Model name: {}
                 Epochs: {}
                 Batch size: {}
                 Learning rate: {}
                 Training size: {}
                 Validation size: {}
                 Checkpoints: {}
-                CUDA: {}
-            '''.format(self.epochs, self.batchSize, self.learningRate, len(iddataset['train']),
-                       len(iddataset['val']), str(self.saveBestModel), str(device)))
+                DEVICE: {}
+            '''.format(modelName, self.epochs, self.batchSize, self.learningRate, len(imgTrain),
+                       len(imgVal), str(self.saveBestModel), str(device)))
 
         optimizer = optim.SGD(model.parameters(),
                               lr=self.learningRate,
@@ -70,8 +71,64 @@ class train(config):
             print('Starting epoch {}/{}.'.format(epoch + 1, self.epochs))
             model.train()
 
+            bestDiceCoeff = 0
+            epochLoss = 0
+            epochTrainLoss = 0
+            trainZipped = zip(imgTrain, maskTrain)
+
+            for i, b in enumerate(batch(trainZipped, self.batchSize)):
+                imgs = np.array([i[0] for i in b]).astype(np.float32)
+                trueMasks = np.array([i[1] for i in b]).astype(np.float32)
+
+                imgs = torch.from_numpy(imgs).float().to(device)
+                trueMasks = torch.from_numpy(trueMasks).float().to(device)
+
+                predMasks = model(imgs)
+                predMasksFlat = predMasks.view(-1)
+
+                trueMasksFlat = trueMasks.view(-1)
+
+                loss = Loss(trueMasksFlat, predMasksFlat).dice_coeff_loss()
+                epochLoss += loss
+                trainDice = Loss(trueMasksFlat, predMasksFlat).dice_coeff()
+                epochTrainLoss += trainDice
+
+                print('{0:.4f} --- loss: {1:.6f}'.format(i * self.batchSize / len(imgTrain), loss.item()))
+
+                optimizer.zero_grad()
+                loss.backward()
+                optimizer.step()
+
+                print('Epoch finished ! Loss: {}'.format(epochLoss / i))
+                print(' ! Train Dice Coeff: {}'.format(epochTrainLoss / i))
+
+                valZipped = zip(imgVal, maskVal, device)
+                valDice = evalModel(model, valZipped)
+                print('Validation Dice Coeff: {}'.format(valDice))
+
+                try:
+                    # Create model Directory
+                    os.mkdir('../checkpoints/' + modelName)
+                    print("Directory ", modelName, " Created ")
+                except FileExistsError:
+                    print("Directory ", modelName, " already exists")
+
+                if self.saveBestModel & valDice>bestDiceCoeff:
+                    bestDiceCoeff = valDice
+                    torch.save(model.state_dict(),
+                               self.checkpointsPath + '/' + modelName + '/' + 'CP_epoch-{}_valDice-{}.pth'.format((epoch + 1), valDice))
+                    print('Checkpoint {} saved !'.format(epoch + 1))
 
 
-
-# if __name__ == "__main__":
-#     config()
+if __name__ == "__main__":
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    model = UNet(3, 1).to(device)
+    try:
+        train().main(model, device)
+    except KeyboardInterrupt:
+        torch.save(model.state_dict(), train().checkpointsPath + '/' + model.__class__.__name__ + '/' +'INTERRUPTED.pth')
+        print('Saved interrupt')
+        try:
+            sys.exit(0)
+        except SystemExit:
+            os._exit(0)
