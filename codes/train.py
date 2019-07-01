@@ -3,14 +3,14 @@ from torch import optim
 import torch
 from tqdm import tqdm
 from configparser import ConfigParser
-import sys
-sys.path.append('..')
-from models import UNet
 from losses import *
 from dataLoader import *
 from utils import *
 from losses import *
 from eval import *
+import sys,os
+sys.path.append('..')
+from models import UNet
 
 
 class config:
@@ -62,9 +62,8 @@ class train(config):
             '''.format(modelName, self.epochs, self.batchSize, self.learningRate, len(imgTrain),
                        len(imgVal), str(self.saveBestModel), str(device)))
 
-        optimizer = optim.SGD(model.parameters(),
+        optimizer = optim.Adam(model.parameters(),
                               lr=self.learningRate,
-                              momentum=0.9,
                               weight_decay=0.0005)
 
         for epoch in tqdm(range(self.epochs)):
@@ -102,13 +101,13 @@ class train(config):
                 print('Epoch finished ! Loss: {}'.format(epochLoss / i))
                 print(' ! Train Dice Coeff: {}'.format(epochTrainLoss / i))
 
-                valZipped = zip(imgVal, maskVal, device)
-                valDice = evalModel(model, valZipped)
+                valZipped = zip(imgVal, maskVal)
+                valDice = evalModel(model, valZipped, device)
                 print('Validation Dice Coeff: {}'.format(valDice))
 
                 try:
                     # Create model Directory
-                    os.mkdir('../checkpoints/' + modelName)
+                    os.mkdir(self.checkpointsPath + '/' + modelName)
                     print("Directory ", modelName, " Created ")
                 except FileExistsError:
                     print("Directory ", modelName, " already exists")
