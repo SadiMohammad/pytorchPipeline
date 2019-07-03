@@ -10,8 +10,8 @@ class Flatten:
 class Loss:
     def __init__(self, y_true, y_pred):
         self.smooth = 1
-        self.y_true_f = Flatten.forward(y_true)
-        self.y_pred_f = Flatten.forward(y_pred)
+        self.y_true_f = Flatten().forward(y_true)
+        self.y_pred_f = Flatten().forward(y_pred)
         self.intersection = torch.sum(self.y_true_f * self.y_pred_f, dim = 1)
         self.union = (torch.sum(self.y_true_f) + torch.sum(self.y_pred_f)) - self.intersection
 
@@ -19,11 +19,11 @@ class Loss:
         return (2. * self.intersection + self.smooth) / (torch.sum(self.y_true_f, dim = 1) + torch.sum(self.y_pred_f, dim = 1) + self.smooth)
 
     def dice_coeff_loss(self):
-        return 1-((2. * self.intersection + self.smooth) / (torch.sum(self.y_true_f, dim = 1) + torch.sum(self.y_pred_f, dim = 1) + self.smooth))
+        return -((2. * self.intersection + self.smooth) / (torch.sum(self.y_true_f, dim = 1) + torch.sum(self.y_pred_f, dim = 1) + self.smooth))
 
     def iou_calc(self):
         return (self.intersection + self.smooth)/(self.union + self.smooth)
 
-    def iou_calc(self):
-        return 1-((self.intersection + self.smooth) / (self.union + self.smooth))
+    def iou_calc_loss(self):
+        return -((self.intersection + self.smooth) / (self.union + self.smooth))
 

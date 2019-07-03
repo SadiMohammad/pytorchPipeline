@@ -83,27 +83,24 @@ class train(config):
                 trueMasks = torch.from_numpy(trueMasks).float().to(device)
 
                 predMasks = model(imgs)
-                predMasksFlat = predMasks.view(-1)
 
-                trueMasksFlat = trueMasks.view(-1)
+                loss = Loss(trueMasks, predMasks).dice_coeff_loss()
+                epochLoss += loss[-1].item()
+                trainDice = Loss(trueMasks, predMasks).dice_coeff()
+                epochTrainLoss += trainDice[-1].item()
 
-                loss = Loss(trueMasksFlat, predMasksFlat).dice_coeff_loss()
-                epochLoss += loss
-                trainDice = Loss(trueMasksFlat, predMasksFlat).dice_coeff()
-                epochTrainLoss += trainDice
-
-                print('{0:.4f} --- loss: {1:.6f}'.format(i * self.batchSize / len(imgTrain), loss.item()))
+                print('{0:.4f} --- loss: {1:.6f}'.format(i * self.batchSize / len(imgTrain), loss[-1].item()))
 
                 optimizer.zero_grad()
-                loss.backward()
+                loss[-1].backward()
                 optimizer.step()
 
-                print('Epoch finished ! Loss: {}'.format(epochLoss / i))
-                print(' ! Train Dice Coeff: {}'.format(epochTrainLoss / i))
+                print('Epoch finished ! Loss: {}'.format(epochLoss / (i+1)))
+                print(' ! Train Dice Coeff: {}'.format(epochTrainLoss / (i+1)))
 
                 valZipped = zip(imgVal, maskVal)
                 valDice = evalModel(model, valZipped, device)
-                print('Validation Dice Coeff: {}'.format(valDice))
+                print('Validation Dice Coeff: {}'.format(valDice[-1].item()))
 
                 try:
                     # Create model Directory
@@ -112,16 +109,16 @@ class train(config):
                 except FileExistsError:
                     print("Directory ", modelName, " already exists")
 
-                if self.saveBestModel & valDice>bestDiceCoeff:
-                    bestDiceCoeff = valDice
+                if self.saveBestModel and valDice[-1].item()>bestDiceCoeff:
+                    bestDiceCoeff = valDice[-1].item()
                     torch.save(model.state_dict(),
-                               self.checkpointsPath + '/' + modelName + '/' + 'CP_epoch-{}_valDice-{}.pth'.format((epoch + 1), valDice))
+                               self.checkpointsPath + '/' + modelName + '/' + 'CP_epoch-{}_valDice-{}.pth'.format((epoch + 1), valDice[-1].item()))
                     print('Checkpoint {} saved !'.format(epoch + 1))
 
 
 if __name__ == "__main__":
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    model = UNet(3, 1).to(device)
+    model = UNet(1, 1).to(device)
     try:
         train().main(model, device)
     except KeyboardInterrupt:

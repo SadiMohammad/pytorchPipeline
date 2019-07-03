@@ -28,7 +28,7 @@ class UNet(nn.Module):
         x8 = self.up3(x7, x2)
         x9 = self.up4(x8, x1)
         x10 = self.output(x9)
-        return F.sigmoid(x10)
+        return torch.sigmoid(x10)
 
 class doubleConv(nn.Module):
     def __init__(self, inCh, outCh):
@@ -46,7 +46,7 @@ class doubleConv(nn.Module):
 
     def forward(self, x):
         x = F.relu(self.batchnorm1(self.conv1(x)))
-        x = F.relu(self.batchnorm1(self.conv1(x)))
+        x = F.relu(self.batchnorm2(self.conv2(x)))
         return x
 
 class inputConv(nn.Module):
@@ -66,7 +66,7 @@ class down(nn.Module):
 
     def forward(self, x):
         x = self.pool(x)
-        x = self.conv
+        x = self.conv(x)
         return x
 class up(nn.Module):
     def __init__(self, inCh, outCh, bilinear = True):
@@ -91,6 +91,6 @@ class outConv(nn.Module):
 
 if __name__ == "__main__":
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model = UNet(3, 1).to(device)
+    model = UNet(1, 1).to(device)
     print(model)
     # summary(UNet, (3, 128, 128))
