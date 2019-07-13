@@ -75,7 +75,7 @@ class train(config):
             epochTrainLoss = 0
             trainZipped = zip(imgTrain, maskTrain)
 
-            for i, b in enumerate(batch(trainZipped, self.batchSize)):
+            for i, b in enumerate(tqdm(batch(trainZipped, self.batchSize))):
                 imgs = np.array([i[0] for i in b]).astype(np.float32)
                 trueMasks = np.array([i[1] for i in b]).astype(np.float32)
 
@@ -89,25 +89,15 @@ class train(config):
                 trainDice = Loss(trueMasks, predMasks).dice_coeff()
                 epochTrainLoss += trainDice[-1].item()
 
-                print('{0:.4f} --- loss: {1:.6f}'.format(i * self.batchSize / len(imgTrain), loss[-1].item()))
+                # print('{0:.4f} --- loss: {1:.6f}'.format(i * self.batchSize / len(imgTrain), loss[-1].item()))
 
                 optimizer.zero_grad()
                 loss[-1].backward()
                 optimizer.step()
 
-                print('Epoch finished ! Loss: {}'.format(epochLoss / (i+1)))
-                print(' ! Train Dice Coeff: {}'.format(epochTrainLoss / (i+1)))
 
                 valZipped = zip(imgVal, maskVal)
                 valDice = evalModel(model, valZipped, device)
-                print('Validation Dice Coeff: {}'.format(valDice[-1].item()))
-
-                try:
-                    # Create model Directory
-                    os.mkdir(self.checkpointsPath + '/' + modelName)
-                    print("Directory ", modelName, " Created ")
-                except FileExistsError:
-                    print("Directory ", modelName, " already exists")
 
                 if self.saveBestModel and valDice[-1].item()>bestDiceCoeff:
                     bestDiceCoeff = valDice[-1].item()
@@ -115,16 +105,28 @@ class train(config):
                                self.checkpointsPath + '/' + modelName + '/' + 'CP_epoch-{}_valDice-{}.pth'.format((epoch + 1), valDice[-1].item()))
                     print('Checkpoint {} saved !'.format(epoch + 1))
 
+            print('Epoch finished ! Loss: {}'.format(epochLoss / (i + 1)))
+            print(' ! Train Dice Coeff: {}'.format(epochTrainLoss / (i + 1)))
+            print('Validation Dice Coeff: {}'.format(valDice[-1].item()))
+
 
 if __name__ == "__main__":
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model = UNet(1, 1).to(device)
     try:
-        train().main(model, device)
-    except KeyboardInterrupt:
-        torch.save(model.state_dict(), train().checkpointsPath + '/' + model.__class__.__name__ + '/' +'INTERRUPTED.pth')
-        print('Saved interrupt')
+        # Create model Directory
+        modelName = model.__class__.__name__
+        os.mkdir(train().checkpointsPath + '/' + modelName)
+        print("Directory ", modelName, " Created ")
+    except FileExistsError:
+        print("Directory ", modelName, " already exists")
+    finally:
         try:
-            sys.exit(0)
-        except SystemExit:
-            os._exit(0)
+            train().main(model, device)
+        except KeyboardInterrupt:
+            torch.save(model.state_dict(), train().checkpointsPath + '/' + model.__class__.__name__ + '/' + 'INTERRUPTED.pth')
+            print('Saved interrupt')
+            try:
+                sys.exit(0)
+            except SystemExit:
+                os._exit(0)
