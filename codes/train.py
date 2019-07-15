@@ -116,17 +116,15 @@ if __name__ == "__main__":
     try:
         # Create model Directory
         modelName = model.__class__.__name__
-        os.mkdir(train().checkpointsPath + '/' + modelName)
-        print("Directory ", modelName, " Created ")
-    except FileExistsError:
-        print("Directory ", modelName, " already exists")
-    finally:
+        checkpointDir = train().checkpointsPath + '/' + modelName
+        if ~os.path.exists(checkpointDir):
+            os.mkdir(checkpointDir)
+            print("\nDirectory ", modelName, " Created \n")
+        train().main(model, device)
+    except KeyboardInterrupt:
+        torch.save(model.state_dict(), train().checkpointsPath + '/' + model.__class__.__name__ + '/' + 'INTERRUPTED.pth')
+        print('Saved interrupt')
         try:
-            train().main(model, device)
-        except KeyboardInterrupt:
-            torch.save(model.state_dict(), train().checkpointsPath + '/' + model.__class__.__name__ + '/' + 'INTERRUPTED.pth')
-            print('Saved interrupt')
-            try:
-                sys.exit(0)
-            except SystemExit:
-                os._exit(0)
+            sys.exit(0)
+        except SystemExit:
+            os._exit(0)
