@@ -71,8 +71,9 @@ class train(config):
             model.train()
 
             bestDiceCoeff = 0
-            epochLoss = 0
+            worstDiceCoeff = 1
             epochTrainLoss = 0
+            epochTrainDice = 0
             trainZipped = zip(imgTrain, maskTrain)
 
             for i, b in enumerate(tqdm(batch(trainZipped, self.batchSize))):
@@ -85,9 +86,9 @@ class train(config):
                 predMasks = model(imgs)
 
                 loss = Loss(trueMasks, predMasks).dice_coeff_loss()
-                epochLoss += loss[-1].item()
+                epochTrainLoss += loss[-1].item()
                 trainDice = Loss(trueMasks, predMasks).dice_coeff()
-                epochTrainLoss += trainDice[-1].item()
+                epochTrainDice += trainDice[-1].item()
 
                 # print('{0:.4f} --- loss: {1:.6f}'.format(i * self.batchSize / len(imgTrain), loss[-1].item()))
 
@@ -104,10 +105,13 @@ class train(config):
                     torch.save(model.state_dict(),
                                self.checkpointsPath + '/' + modelName + '/' + 'CP_epoch-{}_valDice-{}.pth'.format((epoch + 1), valDice[-1].item()))
                     print('Checkpoint {} saved !'.format(epoch + 1))
+                if valDice[-1].item()<worstDiceCoeff:
+                    worstDiceCoeff = valDice[-1].item()
 
-            print('Epoch finished ! Loss: {}'.format(epochLoss / (i + 1)))
-            print(' ! Train Dice Coeff: {}'.format(epochTrainLoss / (i + 1)))
-            print('Validation Dice Coeff: {}'.format(valDice[-1].item()))
+            print('Epoch finished ! Loss: {}'.format(epochTrainLoss / (i + 1)))
+            print(' ! Train Dice Coeff: {}'.format(epochTrainDice / (i + 1)))
+            print(' ! Best Validation Dice Coeff: {}'.format(bestDiceCoeff))
+            print(' ! Worst Validation Dice Coeff: {}'.format(worstDiceCoeff))
 
 
 if __name__ == "__main__":
@@ -117,7 +121,7 @@ if __name__ == "__main__":
         # Create model Directory
         modelName = model.__class__.__name__
         checkpointDir = train().checkpointsPath + '/' + modelName
-        if ~os.path.exists(checkpointDir):
+        if not(os.path.exists(checkpointDir)):
             os.mkdir(checkpointDir)
             print("\nDirectory ", modelName, " Created \n")
         train().main(model, device)

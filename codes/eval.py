@@ -5,7 +5,7 @@ import numpy as np
 
 def evalModel(model, zippedVal, device):
     model.eval()
-    totValLoss = 0
+    totValDice = 0
     for i, b in enumerate(zippedVal):
         imgs = np.array(b[0]).astype(np.float32)
         imgs = imgs.reshape(-1, imgs.shape[0], imgs.shape[1], imgs.shape[2])
@@ -17,5 +17,5 @@ def evalModel(model, zippedVal, device):
         predMasks = model(imgs)
         predMasks = (predMasks > 0.5).float()
 
-        totValLoss += Loss(trueMasks, predMasks).dice_coeff()
-    return totValLoss / (i + 1)
+        totValDice += Loss(trueMasks, predMasks).dice_coeff()
+    return totValDice / (i + 1)
