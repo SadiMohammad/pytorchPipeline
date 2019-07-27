@@ -16,10 +16,14 @@ class Loss:
         self.union = (torch.sum(self.y_true_f) + torch.sum(self.y_pred_f)) - self.intersection
 
     def dice_coeff(self):
-        return (2. * self.intersection + self.smooth) / (torch.sum(self.y_true_f, dim = 1) + torch.sum(self.y_pred_f, dim = 1) + self.smooth)
+        coeff = (2. * self.intersection + self.smooth) / (torch.sum(self.y_true_f, dim = 1) + torch.sum(self.y_pred_f, dim = 1) + self.smooth)
+        coeff = coeff.type(torch.DoubleTensor)
+        return coeff
 
     def dice_coeff_loss(self):
-        return -((2. * self.intersection + self.smooth) / (torch.sum(self.y_true_f, dim = 1) + torch.sum(self.y_pred_f, dim = 1) + self.smooth))
+        loss = -((2. * self.intersection + self.smooth) / (torch.sum(self.y_true_f, dim = 1) + torch.sum(self.y_pred_f, dim = 1) + self.smooth))
+        loss = loss.type(torch.DoubleTensor)
+        return loss
 
     def iou_calc(self):
         return (self.intersection + self.smooth)/(self.union + self.smooth)

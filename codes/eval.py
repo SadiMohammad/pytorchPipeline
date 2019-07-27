@@ -2,11 +2,11 @@
 import torch
 from losses import *
 import numpy as np
+from utils import *
 
 def evalModel(model, zippedVal, device):
-    model.eval()
     totValDice = 0
-    for i, b in enumerate(zippedVal):
+    for i, b in enumerate(batch(zippedVal)):
         imgs = np.array(b[0]).astype(np.float32)
         imgs = imgs.reshape(-1, imgs.shape[0], imgs.shape[1], imgs.shape[2])
         trueMasks = np.array(b[1]).astype(np.float32)
@@ -17,5 +17,7 @@ def evalModel(model, zippedVal, device):
         predMasks = model(imgs)
         predMasks = (predMasks > 0.5).float()
 
-        totValDice += Loss(trueMasks, predMasks).dice_coeff()
+        valDice = torch.mean(Loss(trueMasks, predMasks).dice_coeff())
+        print(valDice)
+        totValDice += valDice.item()
     return totValDice / (i + 1)

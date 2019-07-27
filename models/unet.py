@@ -15,7 +15,8 @@ class UNet(nn.Module):
         self.up2 = up(512, 256)
         self.up3 = up(256, 128)
         self.up4 = up(128, 64)
-        self.output = outConv(64, n_classes)
+        self.preOutput = outConv(64, 32)
+        self.output = outConv(32, n_classes)
 
     def forward(self, x):
         x1 = self.input(x)
@@ -27,8 +28,9 @@ class UNet(nn.Module):
         x7 = self.up2(x6, x3)
         x8 = self.up3(x7, x2)
         x9 = self.up4(x8, x1)
-        x10 = self.output(x9)
-        return torch.sigmoid(x10)
+        x10 = self.preOutput(x9)
+        x11 = self.output(x10)
+        return torch.sigmoid(x11)
 
 class doubleConv(nn.Module):
     def __init__(self, inCh, outCh):

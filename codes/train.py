@@ -1,4 +1,4 @@
-
+import copy
 from torch import optim
 import torch
 from tqdm import tqdm
@@ -6,9 +6,8 @@ from configparser import ConfigParser
 from losses import *
 from dataLoader import *
 from utils import *
-from losses import *
 from eval import *
-import sys,os
+import sys, os
 sys.path.append('..')
 from models import UNet
 
@@ -74,6 +73,7 @@ class train(config):
             worstDiceCoeff = 1
             epochTrainLoss = 0
             epochTrainDice = 0
+            epochValDice = 0
             trainZipped = zip(imgTrain, maskTrain)
 
             for i, b in enumerate(tqdm(batch(trainZipped, self.batchSize))):
@@ -82,34 +82,43 @@ class train(config):
 
                 imgs = torch.from_numpy(imgs).float().to(device)
                 trueMasks = torch.from_numpy(trueMasks).float().to(device)
-
+                # print(trueMasks.size())
                 predMasks = model(imgs)
 
-                loss = Loss(trueMasks, predMasks).dice_coeff_loss()
-                epochTrainLoss += loss[-1].item()
-                trainDice = Loss(trueMasks, predMasks).dice_coeff()
-                epochTrainDice += trainDice[-1].item()
+                mBatchLoss = torch.mean(Loss(trueMasks, predMasks).dice_coeff_loss())
+                epochTrainLoss += mBatchLoss.item()
+                trainDice = torch.mean(Loss(trueMasks, predMasks).dice_coeff())
+                epochTrainDice += trainDice.item()
 
-                # print('{0:.4f} --- loss: {1:.6f}'.format(i * self.batchSize / len(imgTrain), loss[-1].item()))
+                # print('{0:.4f} --- mBatchLoss: {1:.6f}'.format(i * self.batchSize / len(imgTrain), mBatchLoss[-1].item()))
 
                 optimizer.zero_grad()
-                loss[-1].backward()
+                print(trainDice.item())
+                mBatchLoss.backward()
                 optimizer.step()
 
-
+                model.eval()
                 valZipped = zip(imgVal, maskVal)
-                valDice = evalModel(model, valZipped, device)
+                with torch.no_grad():
+                    mBtachValDice = evalModel(model, valZipped, self.batchSize, device)
+                    epochValDice += mBtachValDice
 
-                if self.saveBestModel and valDice[-1].item()>bestDiceCoeff:
-                    bestDiceCoeff = valDice[-1].item()
-                    torch.save(model.state_dict(),
-                               self.checkpointsPath + '/' + modelName + '/' + 'CP_epoch-{}_valDice-{}.pth'.format((epoch + 1), valDice[-1].item()))
-                    print('Checkpoint {} saved !'.format(epoch + 1))
-                if valDice[-1].item()<worstDiceCoeff:
-                    worstDiceCoeff = valDice[-1].item()
+                # print('  ###')
+                print(mBtachValDice)
 
-            print('Epoch finished ! Loss: {}'.format(epochTrainLoss / (i + 1)))
-            print(' ! Train Dice Coeff: {}'.format(epochTrainDice / (i + 1)))
+                if mBtachValDice>bestDiceCoeff:
+                    bestDiceCoeff = mBtachValDice
+                    best_model = copy.deepcopy(model)
+                if mBtachValDice<worstDiceCoeff:
+                    worstDiceCoeff = mBtachValDice
+
+            if self.saveBestModel:
+                torch.save(best_model.state_dict(),
+                           self.checkpointsPath + '/' + modelName + '/' + 'CP_epoch-{}_dice-{}.pth'.format((epoch + 1), bestDiceCoeff))
+                print('Checkpoint {} saved !'.format(epoch + 1))
+
+            print('Epoch finished ! Train Dice Coeff: {}'.format(epochTrainDice / (i + 1)))
+            print(' ! Validation Dice Coeff: {}'.format(epochValDice / (i + 1)))
             print(' ! Best Validation Dice Coeff: {}'.format(bestDiceCoeff))
             print(' ! Worst Validation Dice Coeff: {}'.format(worstDiceCoeff))
 
