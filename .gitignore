@@ -5,4 +5,13 @@ refs/*
 codes/myTest.py
 checkpoints/*
 !checkpoints/placeholder.txt
-
+modeling/*
+codes/dump.py
+codes/deeplabSus.py
+codes/main.ipynb
+codes/contourTrain.py
+codes/1.tif
+unet/*
+codes/temp.py
+codes/.ipynb_checkpoints/
+models/unet2.py

@@ -2,13 +2,20 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="2d1bcd78-2064-4882-8de0-ba228c84ef26" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../checkpoints/placeholder.txt.txt" beforeDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../modeling/.idea/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../modeling/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../modeling/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../modeling/.idea/modeling.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../modeling/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../modeling/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/config.ini" beforeDir="false" afterPath="$PROJECT_DIR$/config.ini" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/eval.py" beforeDir="false" afterPath="$PROJECT_DIR$/eval.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/losses.py" beforeDir="false" afterPath="$PROJECT_DIR$/losses.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/train.py" beforeDir="false" afterPath="$PROJECT_DIR$/train.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../models/unet.py" beforeDir="false" afterPath="$PROJECT_DIR$/../models/unet.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../models/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/../models/__init__.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -26,68 +33,17 @@
       </list>
     </option>
   </component>
-  <component name="FindInProjectRecents">
-    <findStrings>
-      <find>inputConv</find>
-      <find>double_conv</find>
-      <find>BatchNorm2d</find>
-      <find>Batchnorm2d</find>
-      <find>MaxPooling2D</find>
-      <find>in_ch</find>
-      <find>inChannels</find>
-      <find>summary(UNet, (3, 128, 128))</find>
-      <find>cp</find>
-      <find>batchImg /= 255.</find>
-      <find>net</find>
-      <find>dataset</find>
-      <find>tot</find>
-      <find>epoch_loss</find>
-      <find>device</find>
-      <find>max_pool2d</find>
-      <find>predMasksFlat</find>
-      <find>trueMasksFlat</find>
-      <find>epochTrainLoss</find>
-      <find>epochLoss</find>
-      <find>loss</find>
-      <find>trainDice</find>
-      <find>miniBatchLoss</find>
-      <find>valDice</find>
-    </findStrings>
-    <replaceStrings>
-      <replace>BatchNorm2d</replace>
-      <replace>MaxPool2D</replace>
-      <replace>inCh</replace>
-      <replace>in_channels</replace>
-      <replace>parser</replace>
-      <replace>model</replace>
-      <replace>zippedVal</replace>
-      <replace>totValLoss</replace>
-      <replace>epochLoss</replace>
-      <replace>epochtrainLoss</replace>
-      <replace>epochTrainDice</replace>
-      <replace>epochTrainLoss</replace>
-      <replace>miniBatchLoss</replace>
-      <replace>miniBatchv</replace>
-      <replace>mBatchLoss</replace>
-      <replace>mBtachValDice</replace>
-    </replaceStrings>
-  </component>
   <component name="Git.Settings">
     <option name="ROOT_SYNC" value="DONT_SYNC" />
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="960" />
-    <option name="y" value="27" />
-    <option name="width" value="960" />
-    <option name="height" value="1053" />
-  </component>
   <component name="ProjectId" id="1Oas13YMsRCCZcFnhiXXielE5Xj" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-    <property name="settings.editor.selected.configurable" value="pyconsole" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="PyConsoleOptionsProvider">
     <option name="myPythonConsoleState">
@@ -110,29 +66,8 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.train">
-    <configuration name="__init__" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <module name="code" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="C:\Users\hellb\Miniconda3\envs\torch\python.exe" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../models" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/../models/__init__.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="true" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="dataLoader" type="PythonConfigurationType" factoryName="Python" temporary="true">
+  <component name="RunManager" selected="Python.temp">
+    <configuration name="dump" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="code" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -144,7 +79,46 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/dataLoader.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/dump.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="true" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="temp" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="code" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/temp.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="true" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="test" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="code" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/test.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="true" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -157,6 +131,9 @@
       <module name="code" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
       <option name="SDK_HOME" value="" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
       <option name="IS_MODULE_SDK" value="true" />
@@ -171,28 +148,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="unet" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <module name="code" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="D:\Anaconda\envs\torch_s\python.exe" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../models" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/../models/unet.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="true" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="utils" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="yolov3" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="code" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -204,7 +160,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/utils.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/yolov3.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="true" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -214,19 +170,19 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Python.__init__" />
-      <item itemvalue="Python.dataLoader" />
+      <item itemvalue="Python.dump" />
+      <item itemvalue="Python.temp" />
+      <item itemvalue="Python.test" />
       <item itemvalue="Python.train" />
-      <item itemvalue="Python.unet" />
-      <item itemvalue="Python.utils" />
+      <item itemvalue="Python.yolov3" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.temp" />
+        <item itemvalue="Python.yolov3" />
+        <item itemvalue="Python.test" />
         <item itemvalue="Python.train" />
-        <item itemvalue="Python.utils" />
-        <item itemvalue="Python.dataLoader" />
-        <item itemvalue="Python.dataLoader" />
-        <item itemvalue="Python.dataLoader" />
+        <item itemvalue="Python.dump" />
       </list>
     </recent_temporary>
   </component>
@@ -242,15 +198,6 @@
       <updated>1558331312658</updated>
     </task>
     <servers />
-  </component>
-  <component name="TodoView">
-    <todo-panel id="selected-file">
-      <is-autoscroll-to-source value="true" />
-    </todo-panel>
-    <todo-panel id="all">
-      <are-packages-shown value="true" />
-      <is-autoscroll-to-source value="true" />
-    </todo-panel>
   </component>
   <component name="Vcs.Log.History.Properties">
     <option name="COLUMN_ORDER">
@@ -288,33 +235,5 @@
         </entry>
       </map>
     </option>
-  </component>
-  <component name="debuggerHistoryManager">
-    <expressions id="setValue">
-      <expression>
-        <expression-string>&lt;class 'list'&gt;: [(0, array([[[ 0.10201173,  0.1427015 , -0.9355778 , ...,  0.42753   ,
-          0.22408108,  0.20373619],
-        [-0.10143719, -0.14212698, -0.18281676, ...,  0.4478749 ,
-          0.1630464 ,  0.08166683],
-        [ 1.3633952 ,  1.3430502 ,  1.6075339 , ...,  0.24442597,
-          0.8954627 ,  0.8751178 ],
-        ...,
-        [-0.8135085 , -1.0169574 , -0.67109424, ...,  1.7296033 ,
-         -0.4879902 ,  1.0582218 ],
-        [-1.0779921 , -1.0169574 , -0.7728187 , ...,  1.3227054 ,
-         -0.3455759 ,  0.8751178 ],
-        [-0.5693698 , -0.9559227 , -0.711784  , ..., -0.5490249 ,
-         -0.5693698 , -0.7728187 ]]], dtype=float32)), (1, array([[[-1.0169574 , -0.3048861 , -0.28454122, ..., -0.28454122,
-         -0.28454122, -0.325231  ],
-        [ 0.1833913 ,  2.0754664 ,  2.319605  , ...,  2.2382255 ,
-          2.156846  ,  1.5464993 ],
-        [-0.04040251,  1.7499481 ,  1.8720175 , ...,  1.3430502 ,
-          1.5464993 ,  1.2209809 ],
-        ...,
-        [-1....</expression-string>
-        <language-id>Python</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
-    </expressions>
   </component>
 </project>

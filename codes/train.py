@@ -1,15 +1,23 @@
 import copy
-from torch import optim
-import torch
-from tqdm import tqdm
+import datetime
+import glob
+import os
+import sys
 from configparser import ConfigParser
-from losses import *
-from dataLoader import *
+
+from torch import optim
+from torch.utils.data import DataLoader
+from tqdm import tqdm
+import torchvision
+
 from utils import *
-from eval import *
-import sys, os
+from losses import *
+
 sys.path.append('..')
-from models import UNet
+from models import SegNet
+# from models import CleanU_Net
+# from modeling import DeepLab
+
 
 
 class config:
@@ -26,27 +34,29 @@ class config:
 
         # train config
         self.learningRate = parser["TRAIN"].getfloat("learningRate")
+        self.trainRatio = parser["TRAIN"].getfloat("trainRatio")
         self.optimizer = parser["TRAIN"].get("optimizer")
         self.loss = parser["TRAIN"].get("loss")
-        self.imgRows = parser["TRAIN"].getint("imgRows")
-        self.imgCols = parser["TRAIN"].getint("imgCols")
+        self.size = parser["TRAIN"].getint("size")
         self.epochs = parser["TRAIN"].getint("epochs")
         self.batchSize = parser["TRAIN"].getint("batchSize")
         self.modelWeightLoad = parser["TRAIN"].getboolean("modelWeightLoad")
         self.saveBestModel = parser["TRAIN"].getboolean("saveBestModel")
+
 
 class train(config):
     def __init__(self):
         super().__init__()
 
     def main(self, model, device):
-        imgRawTrain = DataLoad(self.trainImagePath, self.imgRows, self.imgCols).loadPathData()
-        imgMaskTrain = DataLoad(self.trainMaskPath, self.imgRows, self.imgCols, False).loadPathData()
-        imgRawTrainMeaned = DataLoad(self.trainImagePath, self.imgRows, self.imgCols).stdMeaned(imgRawTrain)
-        imgMaskTrainNormed = DataLoad(self.trainMaskPath, self.imgRows, self.imgCols, False).normalized(imgMaskTrain)
-
-        imgTrain, imgVal, maskTrain, maskVal = split_train_val(imgRawTrainMeaned, imgMaskTrainNormed, 0.1)
         modelName = model.__class__.__name__
+        imageFiles = glob.glob(self.trainImagePath + "/*" + ".jpg")
+        maskFiles = glob.glob(self.trainMaskPath + "/*" + ".tif")
+
+        imgTrain = imageFiles[:int(len(imageFiles) * self.trainRatio)]
+        imgVal = imageFiles[int(len(imageFiles) * self.trainRatio):]
+        maskTrain = maskFiles[:int(len(imageFiles) * self.trainRatio)]
+        maskVal = maskFiles[int(len(imageFiles) * self.trainRatio):]
 
         print('''
             Starting training:
@@ -54,88 +64,106 @@ class train(config):
                 Epochs: {}
                 Batch size: {}
                 Learning rate: {}
+                Total size: {}
                 Training size: {}
                 Validation size: {}
                 Checkpoints: {}
                 DEVICE: {}
-            '''.format(modelName, self.epochs, self.batchSize, self.learningRate, len(imgTrain),
+            '''.format(modelName, self.epochs, self.batchSize, self.learningRate, len(imageFiles), len(imgTrain),
                        len(imgVal), str(self.saveBestModel), str(device)))
 
-        optimizer = optim.Adam(model.parameters(),
-                              lr=self.learningRate,
-                              weight_decay=0.0005)
+        # # params = [p for p in model_ft.parameters() if p.requires_grad]
+        optimizer = optim.SGD(model.parameters(), lr=self.learningRate, momentum=0.9, weight_decay=0.00005)
 
-        for epoch in tqdm(range(self.epochs)):
+        # optimizer = optim.Adam(model.parameters(),
+        #                        lr=self.learningRate,
+        #                        weight_decay=0.0005)
+
+        datasetTrain = Dataset_RAM(imgTrain, maskTrain, self.size)
+        loaderTrain = torch.utils.data.DataLoader(datasetTrain, batch_size=self.batchSize, shuffle=True)
+
+        datasetValid = Dataset_RAM(imgVal, maskVal, self.size)
+        loaderValid = torch.utils.data.DataLoader(datasetValid, batch_size=self.batchSize, shuffle=True)
+
+        bestDiceCoeff = 0.4743926368317377
+
+        for epoch in range(self.epochs):
             print('Starting epoch {}/{}.'.format(epoch + 1, self.epochs))
             model.train()
 
-            bestDiceCoeff = 0
-            worstDiceCoeff = 1
+            epochWorstDiceCoeff = 1
             epochTrainLoss = 0
             epochTrainDice = 0
             epochValDice = 0
-            trainZipped = zip(imgTrain, maskTrain)
-
-            for i, b in enumerate(tqdm(batch(trainZipped, self.batchSize))):
-                imgs = np.array([i[0] for i in b]).astype(np.float32)
-                trueMasks = np.array([i[1] for i in b]).astype(np.float32)
-
-                imgs = torch.from_numpy(imgs).float().to(device)
-                trueMasks = torch.from_numpy(trueMasks).float().to(device)
-                # print(trueMasks.size())
-                predMasks = model(imgs)
+            for i_train, sample_train in enumerate(tqdm(loaderTrain)):
+                images = sample_train[0].to(device)
+                trueMasks = sample_train[1].to(device)
+                preds = model(images)
+                predMasks = preds
+                # preds = preds['out'][:, 0, :, :] 
+                # predMasks = torch.sigmoid(preds)
+                # print(predMasks.values())
 
                 mBatchLoss = torch.mean(Loss(trueMasks, predMasks).dice_coeff_loss())
                 epochTrainLoss += mBatchLoss.item()
-                trainDice = torch.mean(Loss(trueMasks, predMasks).dice_coeff())
-                epochTrainDice += trainDice.item()
-
-                # print('{0:.4f} --- mBatchLoss: {1:.6f}'.format(i * self.batchSize / len(imgTrain), mBatchLoss[-1].item()))
+                mBatchDice = torch.mean(Loss(trueMasks, predMasks).dice_coeff())
+                epochTrainDice += mBatchDice.item()
 
                 optimizer.zero_grad()
-                print(trainDice.item())
                 mBatchLoss.backward()
                 optimizer.step()
 
                 model.eval()
-                valZipped = zip(imgVal, maskVal)
                 with torch.no_grad():
-                    mBtachValDice = evalModel(model, valZipped, self.batchSize, device)
-                    epochValDice += mBtachValDice
+                    mBatchValDice = evalModel(model, loaderValid, device)
+                    epochValDice += mBatchValDice
 
-                # print('  ###')
-                print(mBtachValDice)
+                saveCheckpoint = {'epoch': epoch,
+                                  'input_size': self.size,
+                                  'best_dice': bestDiceCoeff,
+                                  'optimizer_state_dict': optimizer.state_dict(),
+                                  'model_state_dict': model.state_dict()}
 
-                if mBtachValDice>bestDiceCoeff:
-                    bestDiceCoeff = mBtachValDice
-                    best_model = copy.deepcopy(model)
-                if mBtachValDice<worstDiceCoeff:
-                    worstDiceCoeff = mBtachValDice
+                if mBatchValDice > bestDiceCoeff:
+                    bestDiceCoeff = mBatchValDice
+                    torch.save(saveCheckpoint,
+                               self.checkpointsPath + '/' + modelName + '/' + '{}_epoch-{}_dice-{}.pth'.format(
+                                   str(datetime.datetime.now()),
+                                   (epoch + 1), bestDiceCoeff))
+                    print('Checkpoint {} saved !'.format(epoch + 1))
+                    # best_model = copy.deepcopy(model)
+                if mBatchValDice < epochWorstDiceCoeff:
+                    epochWorstDiceCoeff = mBatchValDice
 
-            if self.saveBestModel:
-                torch.save(best_model.state_dict(),
-                           self.checkpointsPath + '/' + modelName + '/' + 'CP_epoch-{}_dice-{}.pth'.format((epoch + 1), bestDiceCoeff))
-                print('Checkpoint {} saved !'.format(epoch + 1))
-
-            print('Epoch finished ! Train Dice Coeff: {}'.format(epochTrainDice / (i + 1)))
-            print(' ! Validation Dice Coeff: {}'.format(epochValDice / (i + 1)))
+            print('Epoch finished ! Epoch Train Dice Coeff: {}'.format(epochTrainDice / (i_train + 1)))
+            print(' ! Epoch Worst Validation Dice Coeff: {}'.format(epochWorstDiceCoeff))
+            print(' ! Epoch Validation Dice Coeff: {}'.format(epochValDice / (i_train + 1)))
             print(' ! Best Validation Dice Coeff: {}'.format(bestDiceCoeff))
-            print(' ! Worst Validation Dice Coeff: {}'.format(worstDiceCoeff))
 
 
 if __name__ == "__main__":
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    model = UNet(1, 1).to(device)
+    model = SegNet(1, 1).to(device)
+    # checkpoint = torch.load(train().checkpointsPath + '/' + modelName + '/' + '2019-08-01 04:39:48.331969_epoch-10_dice-0.7213704585097731.pth')
+    # model.load_state_dict(checkpoint['model_state_dict'])
+	# optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+	# epoch = checkpoint['epoch']
+	# loss = checkpoint['loss']
+    # model = torchvision.models.segmentation.deeplabv3_resnet101(pretrained=False, num_classes=1)
+    modelName = model.__class__.__name__
+    model = model.to(device)
+    # checkpoint = torch.load(train().checkpointsPath + '/' + modelName + '/' + '2019-08-30 13:21:52.559302_epoch-5_dice-0.4743926368317377.pth')
+    # model.load_state_dict(checkpoint['model_state_dict'])
     try:
         # Create model Directory
-        modelName = model.__class__.__name__
         checkpointDir = train().checkpointsPath + '/' + modelName
-        if not(os.path.exists(checkpointDir)):
+        if not (os.path.exists(checkpointDir)):
             os.mkdir(checkpointDir)
             print("\nDirectory ", modelName, " Created \n")
         train().main(model, device)
     except KeyboardInterrupt:
-        torch.save(model.state_dict(), train().checkpointsPath + '/' + model.__class__.__name__ + '/' + 'INTERRUPTED.pth')
+        torch.save(model.state_dict(),
+                   train().checkpointsPath + '/' + model.__class__.__name__ + '/' + 'INTERRUPTED.pth')
         print('Saved interrupt')
         try:
             sys.exit(0)
