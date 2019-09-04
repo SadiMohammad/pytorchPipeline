@@ -14,9 +14,10 @@ from utils import *
 from losses import *
 
 sys.path.append('..')
-from models import SegNet
+# from models import UNet
 # from models import CleanU_Net
 # from modeling import DeepLab
+from models import LungNet
 
 
 
@@ -41,6 +42,7 @@ class config:
         self.epochs = parser["TRAIN"].getint("epochs")
         self.batchSize = parser["TRAIN"].getint("batchSize")
         self.modelWeightLoad = parser["TRAIN"].getboolean("modelWeightLoad")
+        self.modelWeight = parser["TRAIN"].get("modelWeight")
         self.saveBestModel = parser["TRAIN"].getboolean("saveBestModel")
 
 
@@ -79,13 +81,13 @@ class train(config):
         #                        lr=self.learningRate,
         #                        weight_decay=0.0005)
 
-        datasetTrain = Dataset_RAM(imgTrain, maskTrain, self.size)
+        datasetTrain = Dataset_RAM(imgTrain, maskTrain, self.size, convert='L')
         loaderTrain = torch.utils.data.DataLoader(datasetTrain, batch_size=self.batchSize, shuffle=True)
 
-        datasetValid = Dataset_RAM(imgVal, maskVal, self.size)
+        datasetValid = Dataset_RAM(imgVal, maskVal, self.size, convert='L')
         loaderValid = torch.utils.data.DataLoader(datasetValid, batch_size=self.batchSize, shuffle=True)
 
-        bestDiceCoeff = 0.4743926368317377
+        bestDiceCoeff = 0.3
 
         for epoch in range(self.epochs):
             print('Starting epoch {}/{}.'.format(epoch + 1, self.epochs))
@@ -100,8 +102,8 @@ class train(config):
                 trueMasks = sample_train[1].to(device)
                 preds = model(images)
                 predMasks = preds
-                # preds = preds['out'][:, 0, :, :] 
-                # predMasks = torch.sigmoid(preds)
+                # preds = preds['out'] 
+                # predMasks = torch.sigmoid(preds) 
                 # print(predMasks.values())
 
                 mBatchLoss = torch.mean(Loss(trueMasks, predMasks).dice_coeff_loss())
@@ -143,7 +145,7 @@ class train(config):
 
 if __name__ == "__main__":
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    model = SegNet(1, 1).to(device)
+    model = LungNet(1, 1).to(device)
     # checkpoint = torch.load(train().checkpointsPath + '/' + modelName + '/' + '2019-08-01 04:39:48.331969_epoch-10_dice-0.7213704585097731.pth')
     # model.load_state_dict(checkpoint['model_state_dict'])
 	# optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
@@ -152,7 +154,7 @@ if __name__ == "__main__":
     # model = torchvision.models.segmentation.deeplabv3_resnet101(pretrained=False, num_classes=1)
     modelName = model.__class__.__name__
     model = model.to(device)
-    # checkpoint = torch.load(train().checkpointsPath + '/' + modelName + '/' + '2019-08-30 13:21:52.559302_epoch-5_dice-0.4743926368317377.pth')
+    # checkpoint = torch.load(train().checkpointsPath + '/' + modelName + '/' + train().modelWeight)
     # model.load_state_dict(checkpoint['model_state_dict'])
     try:
         # Create model Directory

@@ -34,7 +34,7 @@ def evalModel(model, validDataset, device):
 
         preds = model(images)
         predMasks = preds
-        # preds = preds['out'][:, 0, :, :] 
+        # preds = preds['out']
         # predMasks = torch.sigmoid(preds)
         predMasks = (predMasks > 0.5).float()
 
@@ -42,6 +42,26 @@ def evalModel(model, validDataset, device):
         # print(valDice)
         totValDice += valDice.item()
     return totValDice / (i_valid + 1)
+
+
+class Dataset_RAM_TEST(Dataset):
+    def __init__(self, image_paths, size, convert='L'):
+        self.image_paths = image_paths
+        self.convert = convert
+        self.transforms = transforms.Compose([
+            # transforms.Grayscale(num_output_channels=3),
+            transforms.Resize((size, size)),
+            transforms.ToTensor(),
+        ])
+
+    def __getitem__(self, index):
+        image = Image.open(self.image_paths[index]).convert(self.convert)
+        image = image.filter(ImageFilter.BLUR)
+        t_image = self.transforms(image)
+        return t_image
+
+    def __len__(self):
+        return len(self.image_paths)
 
 
 if __name__ == "__main__":
