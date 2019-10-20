@@ -1,4 +1,5 @@
 import copy
+import argparse
 import datetime
 import glob
 import os
@@ -18,7 +19,6 @@ sys.path.append('..')
 # from models import CleanU_Net
 # from modeling import DeepLab
 from models import LungNet
-
 
 
 class config:
@@ -75,19 +75,19 @@ class train(config):
                        len(imgVal), str(self.saveBestModel), str(device)))
 
         # # params = [p for p in model_ft.parameters() if p.requires_grad]
-        optimizer = optim.SGD(model.parameters(), lr=self.learningRate, momentum=0.9, weight_decay=0.00005)
+        # optimizer = optim.SGD(model.parameters(), lr=self.learningRate, momentum=0.9, weight_decay=0.00005)
 
-        # optimizer = optim.Adam(model.parameters(),
-        #                        lr=self.learningRate,
-        #                        weight_decay=0.0005)
+        optimizer = optim.Adam(model.parameters(),
+                               lr=self.learningRate,
+                               weight_decay=0.0005)
 
-        datasetTrain = Dataset_RAM(imgTrain, maskTrain, self.size, convert='L')
+        datasetTrain = Dataset_ROM(imgTrain, maskTrain, self.size, convert='L')
         loaderTrain = torch.utils.data.DataLoader(datasetTrain, batch_size=self.batchSize, shuffle=True)
 
-        datasetValid = Dataset_RAM(imgVal, maskVal, self.size, convert='L')
+        datasetValid = Dataset_ROM(imgVal, maskVal, self.size, convert='L')
         loaderValid = torch.utils.data.DataLoader(datasetValid, batch_size=self.batchSize, shuffle=True)
 
-        bestDiceCoeff = 0.3
+        bestDiceCoeff = 0.4607001204974949
 
         for epoch in range(self.epochs):
             print('Starting epoch {}/{}.'.format(epoch + 1, self.epochs))
@@ -144,6 +144,9 @@ class train(config):
 
 
 if __name__ == "__main__":
+    argParser = argparse.ArgumentParser()
+    argParser.add_argument('--config_scheme', help='configuration for train.py', required=True)
+    args = argParser.parse_args()
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model = LungNet(1, 1).to(device)
     # checkpoint = torch.load(train().checkpointsPath + '/' + modelName + '/' + '2019-08-01 04:39:48.331969_epoch-10_dice-0.7213704585097731.pth')
@@ -154,8 +157,8 @@ if __name__ == "__main__":
     # model = torchvision.models.segmentation.deeplabv3_resnet101(pretrained=False, num_classes=1)
     modelName = model.__class__.__name__
     model = model.to(device)
-    # checkpoint = torch.load(train().checkpointsPath + '/' + modelName + '/' + train().modelWeight)
-    # model.load_state_dict(checkpoint['model_state_dict'])
+    checkpoint = torch.load(train().checkpointsPath + '/' + modelName + '/' + train().modelWeight)
+    model.load_state_dict(checkpoint['model_state_dict'])
     try:
         # Create model Directory
         checkpointDir = train().checkpointsPath + '/' + modelName
