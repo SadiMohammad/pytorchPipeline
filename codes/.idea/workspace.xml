@@ -2,26 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="2d1bcd78-2064-4882-8de0-ba228c84ef26" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/USexp.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/config.ini" beforeDir="false" afterPath="$PROJECT_DIR$/config.ini" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/contourTest2.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dataLoader.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/eval.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/losses.py" beforeDir="false" afterPath="$PROJECT_DIR$/losses.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/morphsnakes.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/train.py" beforeDir="false" afterPath="$PROJECT_DIR$/train.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../modeling/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../modeling/.idea/inspectionProfiles/profiles_settings.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../modeling/.idea/misc.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../modeling/.idea/modeling.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../modeling/.idea/modules.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../modeling/.idea/vcs.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../models/lungnet.py" beforeDir="false" afterPath="$PROJECT_DIR$/../models/lungnet.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../morphsnakes" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -49,7 +32,7 @@
     <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/../models/lungnet.py" />
-    <property name="settings.editor.selected.configurable" value="editor.preferences.fonts.default" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="PyConsoleOptionsProvider">
     <option name="myPythonConsoleState">
