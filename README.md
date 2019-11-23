@@ -1,2 +1,2 @@
 # pytorchPipeline
-pytorch pipeline for deeplearning model
+pytorch pipeline for deeplearning segmentation model
