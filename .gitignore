@@ -17,3 +17,4 @@ codes/temp.py
 codes/.ipynb_checkpoints/
 models/unet2.py
 morphsnakes/*
+.vscode/
