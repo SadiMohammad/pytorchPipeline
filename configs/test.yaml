@@ -1,7 +1,12 @@
+experiment: test
 dataset:
   images_path: ../data/train/images
+  image_ids: ../data/train/img_list.txt
   gt_path: ../data/train/gt
+  gt_ids: ../data/train/gt_list.txt
   input_size: 128
+  img_convert: RGB
+  gt_convert: L
 model:
   model_name: UNet
   dataparallel: False

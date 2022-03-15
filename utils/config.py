@@ -13,19 +13,19 @@ def func(dic):
 
 
 class Config:
-    def __init__(self, experimanet_name):
-        self.exp_name = experimanet_name
-        cfg_file_path = os.path.join("../configs", self.exp_name + ".yaml")
+    def __init__(self, config_file):
+        self.config_file = config_file
+        cfg_file_path = os.path.join("../configs", self.config_file + ".yaml")
         with open(cfg_file_path, "r") as file:
             cfgs = yaml.safe_load(file)
-        cfgs_single_dict = func(cfgs)
+        self.cfgs_single_dict = func(cfgs)
 
         # config
-        for key, value in cfgs_single_dict.items():
+        for key, value in self.cfgs_single_dict.items():
             setattr(self, key, value)
 
 
 if __name__ == "__main__":
-    experimanet_name = "train"
-    Cfgs = Config(experimanet_name)
+    config_file = "train"
+    Cfgs = Config(config_file)
     print(Cfgs.__dict__)
