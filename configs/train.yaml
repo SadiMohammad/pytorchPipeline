@@ -1,20 +1,23 @@
-experiment_name: train
 dataset:
   images_path: ../data/train/images
   gt_path: ../data/train/gt
   train_ratio: 0.8
   input_size: 128
 model:
-  model_name: UNet
+  model_name: UNet'
+  dataparallel: False
+  device_ids: 0
 optimizer:
   optimizer_fn: Adam
   initial_lr: 0.0001
 logs:
+  use_wandb: True
   log_history_path: ../logs/train/history
   log_out_path: ../logs/train/out
 train_setup:
   checkpoints_path: ../checkpoints
-  batch_size: 1
+  batch_size: 10
+  epochs: 20
   model_weight_load: False
   model_weight: 2019-09-17 12:22:27.449158_epoch-3_dice-0.0.pth
   loss_fn: dice_coeff

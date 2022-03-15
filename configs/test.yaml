@@ -1,14 +1,17 @@
-experiment_name: test
 dataset:
   images_path: ../data/train/images
   gt_path: ../data/train/gt
   input_size: 128
 model:
   model_name: UNet
+  dataparallel: False
+  device_ids: 0
 logs:
+  use_wandb: True
   log_history_path: ../logs/test/history
   log_out_path: ../logs/test/out
 test_setup:
   checkpoints_path: ../checkpoints
+  batch_size: 1
   model_weight_load: True
   model_weight: 2019-09-17 12:22:27.449158_epoch-3_dice-0.0.pth
