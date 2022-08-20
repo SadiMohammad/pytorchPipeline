@@ -6,13 +6,13 @@ dataset:
   gt_ids: "/media/sadi/Vol_2/US/DSPRL-Ultrasoundseg/data/data_for_pipeline_check/test/gt_list.txt"
   train_ratio: 0.8
   input_size: 128
-  img_convert: RGB
+  img_convert: L
   gt_convert: L
 model:
   model_name: UNet
   pretrained: False
   pretrain_weight:
-  in_channel: 1
+  in_channel: 3
   n_classes: 1
   dataparallel: False
 optimizer:

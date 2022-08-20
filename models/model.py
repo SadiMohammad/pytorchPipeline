@@ -1,7 +1,6 @@
 from models.unet import UNet
 import os
 import torch, torchvision
-from utils.config import Cfgs, Config
 
 
 class Model:
