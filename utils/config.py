@@ -13,12 +13,12 @@ def func(dic):
 
 
 class Config:
-    def __init__(self, config_file):
-        self.config_file = config_file
+    def __init__(self, args):
+        self.config_file = args.config_file
         cfg_file_path = os.path.join("../configs", self.config_file + ".yaml")
         with open(cfg_file_path, "r") as file:
-            cfgs = yaml.safe_load(file)
-        self.cfgs_single_dict = func(cfgs)
+            self.cfgs = yaml.safe_load(file)
+        self.cfgs_single_dict = func(self.cfgs)
 
         # config
         for key, value in self.cfgs_single_dict.items():
@@ -26,6 +26,12 @@ class Config:
 
 
 if __name__ == "__main__":
-    config_file = "train"
-    Cfgs = Config(config_file)
-    print(Cfgs.__dict__)
+    import argparse
+
+    arg_parser = argparse.ArgumentParser()
+    arg_parser.add_argument(
+        "--config_file", help="config file name/experiment name", required=True
+    )
+    args = arg_parser.parse_args()
+    Cfgs = Config(args)
+    print(Cfgs.cfgs["model"]["model_name"])

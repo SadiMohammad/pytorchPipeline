@@ -1,4 +1,4 @@
-experiment: test
+experiment_name: test
 dataset:
   images_path: ../data/train/images
   image_ids: ../data/train/img_list.txt
@@ -9,8 +9,8 @@ dataset:
   gt_convert: L
 model:
   model_name: UNet
-  dataparallel: False
-  device_ids: 0
+  in_channel: 1
+  n_classes: 1
 logs:
   use_wandb: True
   log_history_path: ../logs/test/history
@@ -18,5 +18,8 @@ logs:
 test_setup:
   checkpoints_path: ../checkpoints
   batch_size: 1
+  device: gpu
+  device_ids: 0
+  dataparallel: False
   model_weight_load: True
-  model_weight: 2019-09-17 12:22:27.449158_epoch-3_dice-0.0.pth
+  model_weight_path: 2019-09-17 12:22:27.449158_epoch-3_dice-0.1.pth

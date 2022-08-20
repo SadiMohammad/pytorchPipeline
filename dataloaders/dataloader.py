@@ -9,7 +9,7 @@ from tqdm import tqdm
 class Dataset_ROM(Dataset):
     def __init__(
         self,
-        experiment,
+        experiment_name,
         image_path,
         image_ids,
         gt_path,
@@ -19,7 +19,7 @@ class Dataset_ROM(Dataset):
         transformers=None,
         device="cpu",
     ):
-        self.experiment = experiment
+        self.experiment_name = experiment_name
         self.image_path = image_path
         self.gt_path = gt_path
         self.img_convert = img_convert
@@ -40,7 +40,7 @@ class Dataset_ROM(Dataset):
         )
         if self.transformers:
             t_image = self.transformers["image"](image)
-            if self.experiment == "train":
+            if self.experiment_name == "train":
                 t_gt = self.transformers["gt"](gt)
         return t_image.to(self.device), t_gt.to(self.device)
 
@@ -51,7 +51,7 @@ class Dataset_ROM(Dataset):
 class Dataset_RAM(Dataset):
     def __init__(
         self,
-        experiment,
+        experiment_name,
         image_path,
         image_ids,
         gt_path,
@@ -61,7 +61,7 @@ class Dataset_RAM(Dataset):
         transformers=None,
         device="cpu",
     ):
-        self.experiment = experiment
+        self.experiment_name = experiment_name
         self.image_path = image_path
         self.gt_path = gt_path
         self.img_convert = img_convert
@@ -89,7 +89,7 @@ class Dataset_RAM(Dataset):
         gt = Image.open(os.path.join(self.gt_path, gt_file)).convert(self.gt_convert)
         if self.transformers:
             t_image = self.transformers["image"](image)
-            if self.experiment == "train":
+            if self.experiment_name == "train":
                 t_gt = self.transformers["gt"](gt)
         return t_image, t_gt
 

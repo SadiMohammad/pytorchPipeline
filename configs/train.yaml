@@ -1,4 +1,4 @@
-experiment: train
+experiment_name: train
 dataset:
   images_path: ../data/train/images
   image_ids: ../data/train/img_list.txt
@@ -9,9 +9,12 @@ dataset:
   img_convert: RGB
   gt_convert: L
 model:
-  model_name: UNet'
+  model_name: UNet
+  pretrained: False
+  pretrain_weight:
+  in_channel: 1
+  n_classes: 1
   dataparallel: False
-  device_ids: 0
 optimizer:
   optimizer_fn: Adam
   initial_lr: 0.0001
@@ -23,7 +26,10 @@ train_setup:
   checkpoints_path: ../checkpoints
   batch_size: 10
   epochs: 20
+  device: gpu
+  device_ids: 0
+  dataparallel: False
   model_weight_load: False
-  model_weight: 2019-09-17 12:22:27.449158_epoch-3_dice-0.0.pth
+  model_weight_path: 2019-09-17 12:22:27.449158_epoch-3_dice-0.0.pth
   loss_fn: dice_coeff
   save_best_model: True
