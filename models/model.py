@@ -4,11 +4,11 @@ import torch, torchvision
 from utils.config import Cfgs, Config
 
 
-class Model(Config):
-    def __init__(self, args):
-        super().__init__(args)
+class Model:
+    def __init__(self, cfgs):
+        self.cfgs = cfgs
 
-    def model_call(self):
+    def get_model(self):
         if self.cfgs["model"]["model_name"].lower() == "unet":
             return UNet(
                 self.cfgs["model"]["in_channel"], self.cfgs["model"]["n_classes"]
@@ -22,7 +22,7 @@ class Model(Config):
     def load_weights(self, model, optimizer):
         checkpoint = torch.load(
             os.path.join(
-                "../ckpts",
+                self.cfgs["train_setup"]["checkpoints_path"],
                 self.cfgs["model"]["model_name"].lower(),
                 self.cfgs["train_setup"]["model_weight_path"],
             )

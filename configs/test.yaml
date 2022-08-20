@@ -1,11 +1,11 @@
 experiment_name: test
 dataset:
-  images_path: ../data/train/images
+  image_path: ../data/train/images
   image_ids: ../data/train/img_list.txt
   gt_path: ../data/train/gt
   gt_ids: ../data/train/gt_list.txt
   input_size: 128
-  img_convert: RGB
+  img_convert: L
   gt_convert: L
 model:
   model_name: UNet
@@ -16,7 +16,7 @@ logs:
   log_history_path: ../logs/test/history
   log_out_path: ../logs/test/out
 test_setup:
-  checkpoints_path: ../checkpoints
+  checkpoints_path: ../ckpts
   batch_size: 1
   device: gpu
   device_ids: 0

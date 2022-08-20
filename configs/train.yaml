@@ -1,9 +1,9 @@
 experiment_name: train
 dataset:
-  images_path: ../data/train/images
-  image_ids: ../data/train/img_list.txt
-  gt_path: ../data/train/gt
-  gt_ids: ../data/train/gt_list.txt
+  image_path: "/media/sadi/Vol_2/US/DSPRL-Ultrasoundseg/data/data_for_pipeline_check/test/images"
+  image_ids: "/media/sadi/Vol_2/US/DSPRL-Ultrasoundseg/data/data_for_pipeline_check/test/img_list.txt"
+  gt_path: "/media/sadi/Vol_2/US/DSPRL-Ultrasoundseg/data/data_for_pipeline_check/test/gt"
+  gt_ids: "/media/sadi/Vol_2/US/DSPRL-Ultrasoundseg/data/data_for_pipeline_check/test/gt_list.txt"
   train_ratio: 0.8
   input_size: 128
   img_convert: RGB
@@ -23,7 +23,7 @@ logs:
   log_history_path: ../logs/train/history
   log_out_path: ../logs/train/out
 train_setup:
-  checkpoints_path: ../checkpoints
+  checkpoints_path: ../ckpts
   batch_size: 10
   epochs: 20
   device: gpu
