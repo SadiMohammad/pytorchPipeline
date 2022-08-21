@@ -9,7 +9,7 @@ dataset:
   img_convert: L
   gt_convert: L
 model:
-  model_name: UNet
+  model_name: deeplabv3
   pretrained: False
   pretrain_weight:
   in_channel: 3
@@ -30,6 +30,10 @@ train_setup:
   device_ids: 0
   dataparallel: False
   model_weight_load: False
+  best_valid_score: 0.0
   model_weight_path: 2019-09-17 12:22:27.449158_epoch-3_dice-0.0.pth
-  loss_fn: dice_coeff
+  loss: bce
+  metric: mIoU
+  use_thld_for_valid: True #threshold for validation
+  thld_for_valid: 0.5 #threshold for validation
   save_best_model: True
