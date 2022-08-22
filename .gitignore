@@ -18,5 +18,5 @@ codes/.ipynb_checkpoints/
 models/unet2.py
 morphsnakes/*
 .vscode/
+wandb/*
 train.sh
-train.py

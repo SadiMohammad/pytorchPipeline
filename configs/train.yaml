@@ -9,10 +9,10 @@ dataset:
   img_convert: L
   gt_convert: L
 model:
-  model_name: deeplabv3
+  model_name: UNet
   pretrained: False
   pretrain_weight:
-  in_channel: 3
+  in_channel: 1
   n_classes: 1
   dataparallel: False
 optimizer:
@@ -20,8 +20,11 @@ optimizer:
   initial_lr: 0.0001
 logs:
   use_wandb: True
-  log_history_path: ../logs/train/history
-  log_out_path: ../logs/train/out
+  wandb_project_name: pytorchPipeline
+  wandb_entity: sadimohammad
+  run_name:
+  save_local_logs: True
+  local_logs_path: ../logs
 train_setup:
   checkpoints_path: ../ckpts
   batch_size: 10
@@ -32,8 +35,8 @@ train_setup:
   model_weight_load: False
   best_valid_score: 0.0
   model_weight_path: 2019-09-17 12:22:27.449158_epoch-3_dice-0.0.pth
-  loss: bce
-  metric: mIoU
+  loss: dice_coeff_loss
+  metric: iou_calc
   use_thld_for_valid: True #threshold for validation
   thld_for_valid: 0.5 #threshold for validation
   save_best_model: True
