@@ -45,25 +45,31 @@ def main(Cfgs):
     transformers = {
         "image": transforms.Compose(
             [
-                transforms.Resize((224, 224)),
+                transforms.Resize((cfgs["dataset"]["input_size"], cfgs["dataset"]["input_size"])),
                 transforms.ToTensor(),
                 transforms.Normalize(mean=0.485, std=0.229),
             ]
         ),
         "gt": transforms.Compose(
             [
-                transforms.Resize((224, 224)),
+                transforms.Resize((cfgs["dataset"]["input_size"] cfgs["dataset"]["input_size"])),
                 transforms.ToTensor(),
             ]
         ),
     }
     dataset_train = Dataset_ROM(cfgs, transformers=transformers)
     loader_train = DataLoader(
-        dataset_train, batch_size=cfgs["train_setup"]["batch_size"], shuffle=True
+        dataset_train,
+        batch_size=cfgs["train_setup"]["batch_size"],
+        shuffle=True,
+        pin_memory=True,
     )
     dataset_valid = Dataset_ROM(cfgs, transformers=transformers)
     loader_valid = DataLoader(
-        dataset_valid, batch_size=cfgs["train_setup"]["batch_size"], shuffle=False
+        dataset_valid,
+        batch_size=cfgs["train_setup"]["batch_size"],
+        shuffle=False,
+        pin_memory=True,
     )
 
     # MODEL
