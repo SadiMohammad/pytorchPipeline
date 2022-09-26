@@ -1,0 +1,7 @@
+pandas==1.4.4
+Pillow==9.2.0
+PyYAML==6.0
+torch==1.12.1
+torchvision==0.13.1
+tqdm==4.64.1
+wandb==0.13.3

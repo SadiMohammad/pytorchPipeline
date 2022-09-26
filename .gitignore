@@ -1,4 +1,4 @@
-data/*
+**/__pycache__/
 !data/placeholder.txt
 refs/*
 !refs/placeholder.txt
@@ -16,4 +16,9 @@ unet/*
 codes/temp.py
 codes/.ipynb_checkpoints/
 models/unet2.py
-morphsnakes/*
+.vscode/
+wandb/*
+temp.py
+logs/*
+!logs/.placeholder
+.idea
