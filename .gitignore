@@ -18,7 +18,6 @@ codes/.ipynb_checkpoints/
 models/unet2.py
 .vscode/
 wandb/*
-train.sh
 temp.py
 logs/*
 !logs/.placeholder
