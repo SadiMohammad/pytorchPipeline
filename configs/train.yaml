@@ -1,35 +1,39 @@
 experiment_name: train
 dataset:
-  image_path: "/media/sadi/Vol_2/US/DSPRL-Ultrasoundseg/data/data_for_pipeline_check/test/images"
-  image_ids: "/media/sadi/Vol_2/US/DSPRL-Ultrasoundseg/data/data_for_pipeline_check/test/img_list.txt"
-  gt_path: "/media/sadi/Vol_2/US/DSPRL-Ultrasoundseg/data/data_for_pipeline_check/test/gt"
-  gt_ids: "/media/sadi/Vol_2/US/DSPRL-Ultrasoundseg/data/data_for_pipeline_check/test/gt_list.txt"
+  image_path: /media/sadi/Vol_2/US/DSPRL-Ultrasoundseg/data/data_for_pipeline_check/test/images
+  label_path: /media/sadi/Vol_2/US/DSPRL-Ultrasoundseg/data/data_for_pipeline_check/test/labels
+  train_image_ids: /media/sadi/Vol_2/general_code_reps/pytorchPipeline/dataloaders/dataset_split0/train_img_ids.txt
+  train_label_ids: /media/sadi/Vol_2/general_code_reps/pytorchPipeline/dataloaders/dataset_split0/train_label_ids.txt
+  val_image_ids: /media/sadi/Vol_2/general_code_reps/pytorchPipeline/dataloaders/dataset_split0/val_img_ids.txt
+  val_label_ids: /media/sadi/Vol_2/general_code_reps/pytorchPipeline/dataloaders/dataset_split0/val_label_ids.txt
   train_ratio: 0.8
   input_size: 128
-  img_convert: L
-  gt_convert: L
+  img_convert: RGB
+  label_convert: L
 model:
   model_name: UNet
   pretrained: False
   pretrain_weight:
-  in_channel: 1
+  in_channel: 3
   n_classes: 1
   dataparallel: False
 optimizer:
   optimizer_fn: Adam
   initial_lr: 0.0001
 logs:
-  use_wandb: True
+  use_wandb: False
   wandb_project_name: pytorchPipeline
   wandb_entity: sadimohammad
   run_name:
   save_local_logs: True
-  local_logs_path: ../logs
+  save_local_config: True
+  local_logs_path: /media/sadi/Vol_2/general_code_reps/pytorchPipeline/logs/out
+  local_cfgs_path: /media/sadi/Vol_2/general_code_reps/pytorchPipeline/logs/cfgs
 train_setup:
-  checkpoints_path: ../ckpts
+  checkpoints_path: /media/sadi/Vol_2/general_code_reps/pytorchPipeline/ckpts
   batch_size: 10
   epochs: 20
-  device: gpu
+  device: cuda:0
   device_ids: 0
   dataparallel: False
   model_weight_load: False
@@ -39,4 +43,4 @@ train_setup:
   metric: iou_calc
   use_thld_for_valid: True #threshold for validation
   thld_for_valid: 0.5 #threshold for validation
-  save_best_model: True
+  save_best_model: False

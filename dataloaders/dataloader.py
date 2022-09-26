@@ -6,64 +6,66 @@ from tqdm import tqdm
 
 
 class Dataset_ROM(Dataset):
-    def __init__(self, cfgs, transformers):
+    def __init__(self, cfgs, subset, transformers):
         self.cfgs = cfgs
+        self.subset = subset
         self.transformers = transformers
-        df = pd.read_csv(cfgs["dataset"]["image_ids"], header=None)
+        df = pd.read_csv(cfgs["dataset"][self.subset + "_image_ids"], header=None)
         self.image_files = df[df.columns[0]].tolist()
-        df = pd.read_csv(cfgs["dataset"]["gt_ids"], header=None)
-        self.gt_files = df[df.columns[0]].tolist()
+        df = pd.read_csv(cfgs["dataset"][self.subset + "_label_ids"], header=None)
+        self.label_files = df[df.columns[0]].tolist()
 
     def __getitem__(self, idx):
         image = Image.open(
             os.path.join(self.cfgs["dataset"]["image_path"], self.image_files[idx])
         ).convert(self.cfgs["dataset"]["img_convert"])
-        gt = Image.open(
-            os.path.join(self.cfgs["dataset"]["gt_path"], self.gt_files[idx])
-        ).convert(self.cfgs["dataset"]["gt_convert"])
+        label = Image.open(
+            os.path.join(self.cfgs["dataset"]["label_path"], self.label_files[idx])
+        ).convert(self.cfgs["dataset"]["label_convert"])
         if self.transformers:
             t_image = self.transformers["image"](image)
             if "train" in self.cfgs["experiment_name"].lower():
-                t_gt = self.transformers["gt"](gt)
-        return t_image, t_gt
+                t_label = self.transformers["label"](label)
+        return t_image, t_label
 
     def __len__(self):
         return len(self.image_files)
 
 
 class Dataset_RAM(Dataset):
-    def __init__(self, cfgs, transformers):
+    def __init__(self, cfgs, subset, transformers):
         self.cfgs = cfgs
+        self.subset = subset
         self.transformers = transformers
-        df = pd.read_csv(cfgs["dataset"]["image_ids"], header=None)
+        df = pd.read_csv(cfgs["dataset"][self.subset + "_image_ids"], header=None)
         self.image_files = df[df.columns[0]].tolist()
-        df = pd.read_csv(cfgs["dataset"]["gt_ids"], header=None)
-        self.gt_files = df[df.columns[0]].tolist()
+        df = pd.read_csv(cfgs["dataset"][self.subset + "_label_ids"], header=None)
+        self.label_files = df[df.columns[0]].tolist()
 
         self.images = []
-        self.gts = []
-        for img_file, gt_file in tqdm(
-            zip(self.image_files, self.gt_files), total=len(self.image_files)
+        self.labels = []
+        for img_file, label_file in tqdm(
+            zip(self.image_files, self.label_files), total=len(self.image_files)
         ):
-            image, gt = self.get_item(img_file, gt_file)
+            image, label = self.get_item(img_file, label_file)
             self.images.append(image)
-            self.gts.append(gt)
+            self.labels.append(label)
 
-    def get_item(self, img_file, gt_file):
+    def get_item(self, img_file, label_file):
         image = Image.open(
             os.path.join(self.cfgs["dataset"]["image_path"], img_file)
         ).convert(self.cfgs["dataset"]["img_convert"])
-        gt = Image.open(os.path.join(self.cfgs["dataset"]["gt_path"], gt_file)).convert(
-            self.cfgs["dataset"]["gt_convert"]
+        label = Image.open(os.path.join(self.cfgs["dataset"]["label_path"], label_file)).convert(
+            self.cfgs["dataset"]["label_convert"]
         )
         if self.transformers:
             t_image = self.transformers["image"](image)
             if "train" in self.cfgs["experiment_name"].lower():
-                t_gt = self.transformers["gt"](gt)
-        return t_image, t_gt
+                t_label = self.transformers["label"](label)
+        return t_image, t_label
 
     def __getitem__(self, idx):
-        return self.images[idx], self.gts[idx]
+        return self.images[idx], self.labels[idx]
 
     def __len__(self):
         return len(self.image_files)
