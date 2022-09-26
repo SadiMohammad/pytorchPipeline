@@ -1,4 +1,4 @@
-data/*
+**/__pycache__/
 !data/placeholder.txt
 refs/*
 !refs/placeholder.txt
@@ -21,4 +21,5 @@ wandb/*
 train.sh
 temp.py
 logs/*
-!logs/placeholder.txt
+!logs/.placeholder
+.idea
